@@ -242,11 +242,11 @@ class PDFProcessorGUI(QMainWindow):
 
         layout.addWidget(button_container)
 
-        # 添加进度条和状态标签到主布局的中间位置
+        # Add progress bar and status label
         progress_container = QWidget()
         progress_layout = QVBoxLayout(progress_container)
         
-        # 进度条
+        # Progress bar
         self.progress_bar = QProgressBar()
         self.progress_bar.setStyleSheet("""
             QProgressBar {
@@ -262,12 +262,12 @@ class PDFProcessorGUI(QMainWindow):
             }
         """)
         self.progress_bar.setRange(0, 100)
-        self.progress_bar.setTextVisible(True)  # 显示进度文本
-        self.progress_bar.setFormat("%p%")  # 显示百分比
-        self.progress_bar.hide()  # 默认隐藏
+        self.progress_bar.setTextVisible(True)
+        self.progress_bar.setFormat("%p%")
+        self.progress_bar.hide()
         progress_layout.addWidget(self.progress_bar)
 
-        # 状态标签
+        # Status label
         self.status_label = QLabel('')
         self.status_label.setStyleSheet("""
             color: #666666;
@@ -278,8 +278,17 @@ class PDFProcessorGUI(QMainWindow):
         self.status_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         progress_layout.addWidget(self.status_label)
 
-        # 将进度容器添加到主布局
         layout.addWidget(progress_container)
+
+        # Add technical support info
+        support_label = QLabel('Technical Support: yue.xu@schindler.com')
+        support_label.setStyleSheet("""
+            color: #666666;
+            font-size: 12px;
+            margin-top: 10px;
+        """)
+        support_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        layout.addWidget(support_label)
 
         # Add copyright info
         copyright_label = QLabel('© 2025 Schindler Escalator PDF OCR Tool')
@@ -330,16 +339,13 @@ class PDFProcessorGUI(QMainWindow):
     def process_single_file(self, file_path):
         """Process single PDF file"""
         try:
-            # 显示进度条和初始状态
             self.progress_bar.show()
             self.progress_bar.setValue(0)
             self.status_label.setText(f"Processing: {os.path.basename(file_path)}")
             
             def update_progress(progress, status):
-                # 确保在主线程中更新UI
                 self.progress_bar.setValue(progress)
                 self.status_label.setText(status)
-                # 强制更新UI
                 QApplication.processEvents()
             
             output_file = str(Path(self.processor.output_dir) / f"ocr_{Path(file_path).name}")
@@ -349,7 +355,6 @@ class PDFProcessorGUI(QMainWindow):
                 progress_callback=update_progress
             )
             
-            # 处理完成后的操作
             self.progress_bar.hide()
             if success:
                 result = QMessageBox.information(
